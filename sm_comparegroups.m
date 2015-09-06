@@ -24,13 +24,14 @@ function stats = sm_comparegroups(data1,data2,nperms,method,varargin)
 %       permutedD   statistics resulting from all permutations
 %       result      string indicating whether match with template was significant
 %
-% Calls: uniqueperms.m, normalize0.m, manhattan.m
+% Calls: manhattan.m, cosine_similarity.m
 %
 % Rogier B. Mars, University of Oxford, 30122014
 % 04012015 RBM Added cosine similarity method
 % 24042015 RBM Added varargin and normalize option
 % 28042015 RBM Added normalize0_all option and made that the default
 % 12082015 RBM Added plottitle option
+% 06092015 RBM Cleaned up for GitHub release
 
 %===============================================
 % Housekeeping
@@ -69,10 +70,6 @@ perms = [];
 for p = 1:nperms
     perms = [perms; randomize_vector([ones(1,size(data1,2)) ones(1,size(data2,2))*2])];
 end
-
-% perms = randomise_rows(uniqueperms([ones(1,size(data1,2)) ones(1,size(data2,2))*2]));
-% fprintf('Exhaustive test would need %i permutations...\n',size(perms,1));
-% perms = perms(1:stats.nperms,:);
 
 %===============================================
 % Determine actual statistic
@@ -155,9 +152,7 @@ end
 fprintf('Determining criterion...\n');
 
 permutedD = sort(permutedD);
-
-% histogram
-myhist = hist(permutedD,25); figure; hist(permutedD,25); hold on;
+stats.permutedD = permutedD;
 
 loc = find(sort(permutedD)==stats.actual);
 
@@ -182,16 +177,17 @@ switch method
     case 'cosine_similarity'
         stats.criterion = permutedD(ceil(0.05*length(permutedD)));
 end
+
+%--------------------------------------
+% plot
+%--------------------------------------
+
+myhist = hist(permutedD,25); figure; hist(permutedD,25); hold on;
 cl = line([stats.criterion stats.criterion],[0 max(myhist)+1]); set(cl,'color','b');
-
-% actual data
 dl = line([stats.actual stats.actual],[0 max(myhist)+1]); set(dl,'color','r');
-
 legend('Perm data','Criterion','Actual data');
 title(plottitle);
 hold off;
-
-stats.permutedD = permutedD;
 
 %--------------------------------------
 % Determine significance
@@ -244,4 +240,27 @@ switch orientation
         input = sortrows(input,2);
         input = input(:,1);
         output = input';
+end
+
+function output = normalize0(input)
+% function output = normalize0(input)
+%
+% As normalize1.m, but returning vector normalized between 0 and 1 instead
+% of between -1 and 1.
+%
+% Rogier B. Mars, University of Oxford, 31012013
+% 28032013 RBM Adapted to suit both 2D and 3D matrices
+
+orig_size = size(input);
+
+input = input(:);
+output = ((input-min(input))./(max(input)-min(input)));
+
+% Reshape back to input format
+if length(orig_size)==2
+    output = reshape(output,orig_size(1),orig_size(2));
+elseif length(orig_size)==3
+    output = reshape(output,orig_size(1),orig_size(2),orig_size(3));
+else
+    error('Input matrices of this size are currenlty not supported!');
 end

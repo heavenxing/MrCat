@@ -11,13 +11,14 @@ function out = manhattan(template,data)
 %   out         1*spiders vector of mahattan distances
 %
 % Rogier B. Mars, University of Oxford, 19112013
-% RBM 02012015 Removed loop to make more efficient
+% 02012015 RBM Removed loop to make more efficient
+% 06092015 RBM Cleaned up for GitHub release
 
 %========================================
 % Housekeeping
 %========================================
 
-if size(template,1)~=size(data,1), error('Error in mahattan: Size of inputs do not match!'); end
+if size(template,1)~=size(data,1), error('Error in MrCat:mahattan: Size of inputs do not match!'); end
 
 %========================================
 % Do the work
@@ -25,7 +26,7 @@ if size(template,1)~=size(data,1), error('Error in mahattan: Size of inputs do n
 
 % out = [];
 % for i = 1:size(data,2)
-%     d = sum(abs(template-data(:,i)));
+%     d = sum(abs(template-data2(:,i)));
 %     out = [out d];
 %     clear d;
 % end

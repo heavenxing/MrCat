@@ -2,9 +2,17 @@
 
 The MR Comparative Anatomy Toolbox (Mr Cat) is a collection of Matlab scripts and functions developed by members and collaborators of the Cognitive Neuroecology Lab at the Radboud University Nijmegen and the University of Oxford. It contains code that we have used to analyze magnetic resonance imaging data obtained from different types of brains.
 
-At the moment, only a very limited set of scripts and functions is available purely as a pilot project. This will hopefully develop as new code is created and the associated papers published.
+At the moment, only a very limited set of scripts and functions is available purely as a pilot project. This will hopefully develop as new code is created and the associated papers published. Note that the code here on GitHub might differ from the code used for the papers, as we aim to keep updating all scripts and functions.
 
 Below follows a short description of how we used the scripts and functions currently available.
+
+#### K-means
+
+K-means clustering is already well implemented in Matlab’s stats toolbox. However, we have implemented some separate versions and add-ons, partly to allow one to play with the algorithms.
+
+K-means can be sensitive to the initiation, multiple methods are implemented and handled by the wrapper `km_init.m` that can implement the kmeans++ initialization (Arthur and Vassilvitskii 2006, Stanford Infolab Technical Report), kd-tree (Redmond and Heneghan (2007, Patt Recog Lett) by calling `km_init_kdtree.m`), or the simple random seeding of the first centroid and spreading the rest out maximally (by calling `km_init_furthest.m`).
+
+Visualizing the results can be done by showing the reordered connectivity matrix using `sort_CC_matrix.m`. The solutions can be evaluated using the hierarchy index described by Kahnt et al. (2012, J Neurosci) using `km_hierarchyindex.m`, the silhouette measure (Rousseeuw, 1987, J Computat Appl Math) as implemented in Matlab and called using  wrapper `km_silhouette.m`, and the variation of information (Meila, 2007, J Multivar Anal) using `km_vi.m` (which calls `columnentropy.m` and `mutualinformation.m`).
 
 #### Visualization
 

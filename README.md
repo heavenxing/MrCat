@@ -4,6 +4,8 @@ The MR Comparative Anatomy Toolbox (Mr Cat) is a collection of Matlab scripts an
 
 At the moment, only a very limited set of scripts and functions is available purely as a pilot project. This will hopefully develop as new code is created and the associated papers published. Note that the code here on GitHub might differ from the code used for the papers, as we aim to keep updating all scripts and functions.
 
+Please note that all code are made available purely as a pilot project and you are using it completely at your own risk. See also LICENSE.md.
+
 Below follows a short description of how we used the scripts and functions currently available.
 
 #### K-means

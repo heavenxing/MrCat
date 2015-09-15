@@ -8,7 +8,7 @@ Below follows a short description of how we used the scripts and functions curre
 
 #### K-means
 
-K-means clustering is already well implemented in Matlab’s stats toolbox. However, we have implemented some separate versions and add-ons, partly to allow one to play with the algorithms.
+K-means clustering is already well implemented in Matlab’s stats toolbox. However, we have implemented some separate versions and add-ons, partly to allow one to play with the algorithms. A fast k-means algorithm is implemented in `kmeans_fast.m`.
 
 K-means can be sensitive to the initiation, multiple methods are implemented and handled by the wrapper `km_init.m` that can implement the kmeans++ initialization (Arthur and Vassilvitskii 2006, Stanford Infolab Technical Report), kd-tree (Redmond and Heneghan (2007, Patt Recog Lett) by calling `km_init_kdtree.m`), or the simple random seeding of the first centroid and spreading the rest out maximally (by calling `km_init_furthest.m`).
 

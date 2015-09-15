@@ -4,11 +4,13 @@ The MR Comparative Anatomy Toolbox (Mr Cat) is a collection of Matlab scripts an
 
 At the moment, only a very limited set of scripts and functions is available purely as a pilot project. This will hopefully develop as new code is created and the associated papers published. Note that the code here on GitHub might differ from the code used for the papers, as we aim to keep updating all scripts and functions.
 
+Please note that all code are made available purely as a pilot project and you are using it completely at your own risk. See also LICENSE.md.
+
 Below follows a short description of how we used the scripts and functions currently available.
 
 #### K-means
 
-K-means clustering is already well implemented in Matlab’s stats toolbox. However, we have implemented some separate versions and add-ons, partly to allow one to play with the algorithms.
+K-means clustering is already well implemented in Matlab’s stats toolbox. However, we have implemented some separate versions and add-ons, partly to allow one to play with the algorithms. A fast k-means algorithm is implemented in `kmeans_fast.m`.
 
 K-means can be sensitive to the initiation, multiple methods are implemented and handled by the wrapper `km_init.m` that can implement the kmeans++ initialization (Arthur and Vassilvitskii 2006, Stanford Infolab Technical Report), kd-tree (Redmond and Heneghan (2007, Patt Recog Lett) by calling `km_init_kdtree.m`), or the simple random seeding of the first centroid and spreading the rest out maximally (by calling `km_init_furthest.m`).
 

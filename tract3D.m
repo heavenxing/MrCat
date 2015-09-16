@@ -12,7 +12,6 @@ function [hf,S,T,L] = tract3D(varargin)
 %         self-contained component and threshold. Probably too slow
 %  - do some hole filling after thresholding the structural, or use a brain
 %    mask to get the structural
-%  - allow multiple surf and cuts for the structural
 %
 %
 % Use
@@ -96,6 +95,7 @@ function [hf,S,T,L] = tract3D(varargin)
 %   L.camzoom       camera zoom [1.4]
 %   L.camproj       camera projection ['perspective']
 %   L.light         add light point(s) by specifying inputs for light [{}]
+%   L.lightangle    add light point(s) using inputs for lightangle [{}]
 %   L.camlight      add camera light(s) [{'right','left'}]
 %   L.lighting      specs for light bouncing of objects ['gouraud']
 %   L.material      shininess of objects 'default' 'shiny' 'metal' ['dull']
@@ -103,6 +103,7 @@ function [hf,S,T,L] = tract3D(varargin)
 %-------------------------------
 %
 % version history
+% 2015-09-16  Lennart   added lightangle, added 'mni' option for Struc
 % 2015-09-14  Lennart   swapped x and y dimensions to match MRI convention
 % 2015-09-14  Lennart   now plotting images in mm not vox
 % 2015-03-11  Lennart   brought threshold, alpha, and color to Tract
@@ -147,6 +148,14 @@ Remove      = p.Results.Remove;
 if ishandle(Remove), Remove = {Remove}; end
 for r = 1:numel(Remove)
   delete(Remove{r});
+end
+
+% specify hard-coded structural images
+if ischar(FnameStruc) && strcmpi(FnameStruc,'mni');
+  FnameStruc = fullfile(getenv('FSLDIR'),'data','standard','MNI152_T1_1mm_brain.nii.gz');
+  if ~exist(FnameStruc,'file')
+    error('MRCAT:TRACT3D:FnameStrucDoesNotExist','You specified to load a default MNI template, but it could not be located in the FSLDIR.');
+  end
 end
 
 % get settings for DrawStruc, DrawTract, and DrawLight
@@ -226,28 +235,28 @@ end
 function S = get_DrawStruc(DrawStruc)
 S.draw          = isstruct(DrawStruc) || DrawStruc;
 S.flipLR        = false;
-S.surf.vol      = 'hemileft';
+S.surf.vol      = 'hemiright';
 % the limits used as input for W = subvolume(x,y,z,S.img,S.surf.vol)
 %   1. coordinates: [nan nan 50 140 nan nan]
 %   2. a string to evaluate: '[nan nan S.ymid S.ymax nan nan]'
 %   3. a string of either: 'none', 'hemileft', 'hemiright'
-S.surf.thr      = 400;
-S.surf.reduce   = 0.5;              % 0 or an input to reducepatch
-S.surf.color	= [0.7 0.7 0.7];
-S.cut.vol       = S.surf.vol;
-S.cut.thr       = 200;
+S.surf.thr      = 4700;
+S.surf.reduce   = 0.3;              % 0 or an input to reducepatch
+S.surf.color	= [0.5 0.5 0.5];
+S.cut.vol       = S.surf(1).vol;
+S.cut.thr       = S.surf(1).thr;
 S.cut.alpha     = 1;
 S.slice.cor.vol = [];               % scalar, or array for multiple
-S.slice.cor.thr = S.surf.thr;
+S.slice.cor.thr = S.surf(1).thr;
 S.slice.cor.alpha = 0.8;
 S.slice.sag.vol = [];               % leave empty to not draw
-S.slice.sag.thr = S.surf.thr;
+S.slice.sag.thr = S.surf(1).thr;
 S.slice.sag.alpha = 0.8;
 S.slice.ax.vol  = [];
-S.slice.ax.thr  = S.surf.thr;
+S.slice.ax.thr  = S.surf(1).thr;
 S.slice.ax.alpha = 0.8;
 S.colormap      = 'gray';
-S.CLim          = 'auto';
+S.CLim          = [1000 7500]; %'auto';
 
 % try to return quickly
 if islogical(DrawStruc), return; end
@@ -255,8 +264,11 @@ if islogical(DrawStruc), return; end
 % combine defaults with current settings
 S = combstruct(S,DrawStruc);
 if isfield(DrawStruc,'surf') && ~isfield(DrawStruc,'cut')
-  S.cut.vol = S.surf.vol;
-  S.cut.thr = S.surf.thr;
+  for s = 1:length(S.surf)
+    S.cut(s).vol = S.surf(s).vol;
+    S.cut(s).thr = S.surf(s).thr;
+    S.cut(s).alpha = 1;
+  end
 end
 if size(S.slice.cor.vol,2) > 1 && size(S.slice.cor.vol,2) ~= 6,
   S.slice.cor.vol = S.slice.cor.vol';
@@ -292,11 +304,12 @@ function L = get_DrawLight(DrawLight)
 L.draw          = isstruct(DrawLight) || DrawLight;
 L.daspect       = [1 1 1];
 L.axis          = 'tight';
-L.view          = [0 20];
+L.view          = [-135 20];
 L.camzoom       = 1.4;
 L.camproj       = 'perspective';
 L.light         = {};
-L.camlight      = {'right','left'};
+L.lightangle    = {};
+L.camlight      = {};
 L.lighting      = 'gouraud';
 L.material      = 'dull';       % 'default', 'shiny', 'metal', 'dull'
 
@@ -314,6 +327,9 @@ else
   if ~iscell(L.light), L.light = {L.light}; end
   if ~iscell(L.light{1}), L.light = {L.light}; end
   if isempty(L.light{1}) || isempty(L.light{1}{1}), L.light = {}; end
+end
+if isempty(L.light) && isempty(L.lightangle) && isempty(L.camlight)
+  L.camlight = {'right','left'};
 end
 %-------------------------------
 
@@ -661,6 +677,15 @@ camproj(L.camproj)
 h.light = cell(size(L.light));
 for l = 1:length(L.light)
   h.light{l} = light(L.light{l}{:});
+end
+h.lightangle = cell(size(L.lightangle));
+for a = 1:length(L.lightangle)
+  la = L.lightangle{a};
+  if ischar(la), h.lightangle{a} = lightangle(la);
+  elseif iscell(la), h.lightangle{a} = lightangle(la{:});
+  elseif all(isnumeric(la)) && numel(la)==2, h.lightangle{a} = lightangle(la(1),la(2));
+  else h.lightangle{a} = lightangle(la); % will probably return an error
+  end
 end
 h.camlight = cell(size(L.camlight));
 for c = 1:length(L.camlight)

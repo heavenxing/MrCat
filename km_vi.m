@@ -1,30 +1,43 @@
 function VI = km_vi(idx)
-% function VI = km_vi(idx)
+% Calculate variation of information metric (Meila, 2007 following Kahnt
+% et al.,2012, J Neurosci) between cluster solutions
+%--------------------------------------------------------------------------
 %
-% Calculate variation of information metric (Meila, 2007 following Kahnt et al.,2012, J
-% Neurosci) between cluster solutions
+% Use
+%   VI = km_vi(idx)
 %
-% Input:
+% Input
 %   idx     number_of_voxels*number_of_solutions
 %
-% Output:
+% Output
 %   VI      variation of information metric vector
 %
-% Calls: columnentropy.m, mutualinformation.m
+% Dependency
+%   columnentropy.m
+%   mutualinformation.m
 %
-% Rogier B. Mars, University of Oxford, 18022014
-% 12082015 RBM Allow comparison of more than two solution in one go
-% 01092015 RBM Housekeeping
+% version history
+% 2015-09-16	Lennart		documentation
+% 2015-09-01  Rogier    housekeeping
+% 2015-08-12  Rogier    Allow comparison of more than two solutions
+% 2014-02-18  Rogier    created
+%
+% copyright
+% Rogier B. Mars
+% University of Oxford & Donders Institute, 2014-02-18
+%--------------------------------------------------------------------------
 
-%=========================================================
-% Housekeeping
-%=========================================================
+
+%===============================
+%% housekeeping
+%===============================
 
 if (size(idx,2)==1), error('Error in MrCat:km_vi: Input idx has wrong number of columns in km_vi.m!'); end
 
-%=========================================================
-% Do the work
-%=========================================================
+
+%===============================
+%% Do the work
+%===============================
 
 VI = [];
 

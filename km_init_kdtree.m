@@ -1,25 +1,37 @@
 function C = kmeans_init_kdtree(X,k)
 % Find appropriate initial centroids for kmeans clustering based on a quick
-% kd-tree clustering of the data.
+% kd-tree clustering of the data. Following Redmond et al. "A method for
+% initialising the k-means clustering algorithm using kd-trees",
+% PattRecogLett, 2007
+%--------------------------------------------------------------------------
+%
+% Use
+%   C = kmeans_init_kdtree(X,k)
 %
 % Input
-%   X               points-by-dimension matrix with multivariate data
-%   k               scalar with number of clusters to initialize
+%   X       points-by-dimension matrix with multivariate data
+%   k       scalar with number of clusters to initialize
 %
 % Output
-%   C               k-by-size(X,2) matrix with the initial centroids
-%                   corresponding to each class
+%   C       k-by-size(X,2) matrix with the initial centroids corresponding
+%           to each class
 %
-% Reference:
+% version history
+% 2015-09-16	Lennart		documentation
+% 2014-11-30  Lennart   created
+%
+% Reference
 %   Redmond; Heneghan - 2007 - PattRecogLett - A method for initialising
 %   the k-means clustering algorithm using kd-trees
 %
-% version history
-% 2014-11-30    Lennart created
-%
+% copyright
 % Lennart Verhagen & Rogier B. Mars
-% University of Oxford, 2014-11-30
+% University of Oxford & Donders Institute, 2014-11-30
 %--------------------------------------------------------------------------
+
+%===============================
+%% build kd-tree
+%===============================
 
 % determine maximum number of samples in a leaf
 [n,d] = size(X);
@@ -51,6 +63,11 @@ end
 centroids = vertcat(tree(idx(n_cut+1:n_leaf)).centroid);
 n_sel = n_leaf-n_cut;
 
+
+%===============================
+%% pick initial centroids
+%===============================
+
 % pick first initial centroid
 C = nan(k,d);
 C(1,:) = centroids(end,:);
@@ -69,9 +86,12 @@ for i = 2:k
 end
 
 
-%% kdtree_build
-%-------------------------------
+%===============================
+%% sub functions
+%===============================
+
 function tree = kdtree_build(X,n_max,tree)
+% build a kd-tree
 
 % initialize tree
 if nargin < 3 || isempty(tree)
@@ -102,7 +122,7 @@ end
 
 % find dimension with biggest range
 [~,dim] = max(r);
-% median split along dim 
+% median split along dim
 med = median(X(:,dim));
 left = X(X(:,dim)<=med,:);
 right = X(X(:,dim)>med,:);

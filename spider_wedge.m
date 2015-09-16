@@ -1,13 +1,21 @@
 function [hf, ha, hp, hl] = spiderwedge(data,varargin)
+% Create a spider plot of data (an M axes by N set matrix), optionally with
+% error bars. Supports wedge, patch, line, and contour spider plots. So
+% contrary to what its name suggests, it does more than just wedges.
 %--------------------------------------------------------------------------
-% Create a spider plot of data (an M axes by N set matrix). Supports wedge,
-% patch, and line spider plots. So contrary to what its name suggests, it
-% does more than just wedges.
+%
+% Use
+% 	[hf, ha, hp, hl] = spiderwedge(data,varargin)
+% 	[hf, ha, hp, hl] = spiderwedge(data,err,varargin)
+% 	many many more usage cases possible. Please see below for examples.
 %
 % Input
-%   data        matrix of size M (axes) by N (set).
+%   data        data matrix of size M (axes) by N (set)
 %
-% Optional parameter-value pair input
+% Optional
+% 	err 				data error matrix of size M (axes) by N (set)
+%
+% Optional (parameter-value pairs)
 %   PlotType    'wedge', 'patch', 'line', 'contour' ['wedge']
 %   Alpha       value (0 to 1) to set the FaceAlpha of patches [0.3]
 %   Color       either an RGB matrix, color char, or color index
@@ -24,130 +32,124 @@ function [hf, ha, hp, hl] = spiderwedge(data,varargin)
 %   Legend      cell vector with dataset legend identification (1xN)
 %   Handle      figure or plot handle
 %
-%   Any remaining Parameter-Value pairs are passed along to the plotting
-%   funcion creating the wedge, patch, or line.
+%   Any remaining parameter-value pairs are passed along to the plotting
+%   funcion creating the wedge, patch, line, or contour.
 %
-% Optional output
+% Output
 %   hf          figure handle
 %   ha          axes handle
 %   hp          plot handle
 %   hl          legend handle
 %
 % version history
-% 2015-08-12    Lennart added contour plotting option
-% 2015-03-11    Lennart added NaNZero option
-% 2015-02-16    Lennart added documentation and examples
-% 2015-02-16    Lennart added SortSets
-% 2015-02-01    Lennart general clean-up
-% 2015-02-01    Lennart changed input to parameter-value pairs
-% 2015-02-01    Lennart added 'patch' and 'wedge' plot types
-% 2014-12-23    Michael adapted
-% 2008-01-30    Michael	created
+% 2015-09-16	Lennart		documentation
+% 2015-08-12  Lennart 	added 'contour' plot type
+% 2015-03-11  Lennart 	added NaNZero option
+% 2015-02-16  Lennart 	added documentation and examples
+% 2015-02-16  Lennart 	added SortSets
+% 2015-02-01  Lennart 	general clean-up
+% 2015-02-01  Lennart 	changed input to parameter-value pairs
+% 2015-02-01  Lennart 	added 'patch' and 'wedge' plot types
+% 2014-12-23  Michael 	adapted
+% 2008-01-30  Michael		created
 %
-% copyright:
+% copyright of earlier versions (see end of file)
+%   Original function: spider.m
+%   Version: 2014-12-23
+%   Created: 2008-01-30
+%   Written by Michael Arant
+% 	Michelin Maericas Research and Development Corp
+%
+% copyright
 % Lennart Verhagen & Rogier B. Mars
-% University of Oxford, 2015-02-01
+% University of Oxford & Donders Institute, 2015-02-01
+%--------------------------------------------------------------------------
 %
-% Michael Arant
-% Michelin Maericas Research and Development Corp, 2008-01-30
-%
-%
-%% examples of how to use the function spider_wedge
-%
+%% usage examples
+%--------------------------------------------------------------------------
 % minimal use with 9 axes in 1 set
+%-------------------------------
 % dat = [2 4 5 3 1 3 6 4 5]';
 % spider_wedge(dat);
 %
 % clean: no title, no labels, no axes, no lines
+%-------------------------------
 % spider_wedge(dat,'Title','','Label',{},'PlotAxes',false,'LineStyle','none');
 %
 % clean, with error bars
+%-------------------------------
 % err = rand(length(dat),1);
 % spider_wedge(dat,err,'Title','','Label',{},'PlotAxes',false,'LineStyle','none');
 %
 % plot spider wedges with spider lines
+%-------------------------------
 % [hf, ha] = spider_wedge(dat,err,'Title','','Label',{},'PlotAxes',false,'LineStyle','none');
 % hold(ha,'on');
 % spider_wedge(dat(randperm(length(dat))),err(randperm(length(dat))),'Handle',ha,'PlotType','line','Title','','Label',{},'PlotAxes',false,'Color','r');
 %
-% % minimal use with 3 axes and 4 sets
+% minimal use with 3 axes and 4 sets
+%-------------------------------
 % dat = [1 2 3 4; 2 3 4 5; 1 3 5 7];
 % spider_wedge(dat);
 %
-% % plot data as a patch or as a line
+% plot data as a patch or as a line
+%-------------------------------
 % spider_wedge(dat,'PlotType','patch');
 % spider_wedge(dat,'PlotType','line');
 %
-% % plot data as a wedge contour, of different widths, and connected or not
+% plot data as a wedge contour, of different widths, and connected or not
+%-------------------------------
 % spider_wedge(dat,'PlotType','contour');
 % spider_wedge(dat,'PlotType','contour','WedgeWidth',1);
 % spider_wedge(dat,'PlotType','contour','ConnContour',true);
 % spider_wedge(dat,'PlotType','contour','WedgeWidth',0.5,'ConnContour',true);
 %
-% % minimal use with 4 axes and 3 sets
+% minimal use with 4 axes and 3 sets
+%-------------------------------
 % spider_wedge(dat');
 %
-% % scale to the range over sets for each axis individually
+% scale to the range over sets for each axis individually
+%-------------------------------
 % spider_wedge(dat,'Scale','axis');
 %
-% % scale to the range of each set
+% scale to the range of each set
+%-------------------------------
 % spider_wedge(dat,'Scale','set');
 %
-% % not transparant
+% not transparant
+%-------------------------------
 % spider_wedge(dat,'Alpha',1);
 %
-% % sort sets based on magnitude
+% sort sets based on magnitude
+%-------------------------------
 % spider_wedge(dat,'Alpha',1,'SortSets',true);
 %
-% % give plot title, axis labels, and set labels (legend)
+% give plot title, axis labels, and set labels (legend)
+%-------------------------------
 % spider_wedge(dat(:,3:4),'Title','This is the title','Label',{'right','left-up','left-down'},'Legend',{'first','second'});
 %
-% % do not plot axes, lines, title, nor labels
+% do not plot axes, lines, title, nor labels
+%-------------------------------
 % spider_wedge(dat(:,3),'PlotAxes',false,'LineStyle','none','Title','','Label',{},'SortSets',true,'Alpha',0.5);
 %
-% % plot skinny wedges with dashed lines in a fixed range with three tickmarks
+% plot skinny wedges with dashed lines in a fixed range with three tickmarks
+%-------------------------------
 % spider_wedge(dat(:,3),'WedgeWidth',0.3,'Range',[2 5],'NrTickMarks',3,'LineStyle','--','Title','','Label',{},'SortSets',true,'Alpha',0.5);
 %
-% % plot sets in subplots, with fixed range, and set the color by index
+% plot sets in subplots, with fixed range, and set the color by index
+%-------------------------------
 % figure;
 % spider_wedge(dat(:,1),'Handle',subplot(2,2,1),'Range',[0 7],'Color',1,'PlotAxes',false,'LineStyle','none','Label',{},'Title','first');
 % spider_wedge(dat(:,2),'Handle',subplot(2,2,2),'Range',[0 7],'Color',2,'PlotAxes',false,'LineStyle','none','Label',{},'Title','second');
 % spider_wedge(dat(:,3),'Handle',subplot(2,2,3),'Range',[0 7],'Color',3,'PlotAxes',false,'LineStyle','none','Label',{},'Title','third');
 % spider_wedge(dat(:,4),'Handle',subplot(2,2,4),'Range',[0 7],'Color',4,'PlotAxes',false,'LineStyle','none','Label',{},'Title','fourth');
-%
-%
-%% credits & copyright
-%
-% based on the file 'spider.m' by Michael Arant, 2008-01-30
-% Copyright (c) 2014, Michael Arant
-% All rights reserved.
-% 
-% Redistribution and use in source and binary forms, with or without
-% modification, are permitted provided that the following conditions are
-% met:
-%
-%     * Redistributions of source code must retain the above copyright
-%       notice, this list of conditions and the following disclaimer.
-%     * Redistributions in binary form must reproduce the above copyright
-%       notice, this list of conditions and the following disclaimer in the
-%       documentation and/or other materials provided with the distribution
-%
-% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-% IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-% THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-% PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-% CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-% EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-% PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-% PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-% LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-% NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-% SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 %--------------------------------------------------------------------------
 
 
+%===============================
 %% housekeeping
-%-------------------------------
+%===============================
+
 % parse input arguments based on input, default and expected values
 p = inputParser;
 p.KeepUnmatched = true;
@@ -189,6 +191,11 @@ LabelCell   = p.Results.Label;
 LegendCell  = p.Results.Legend;
 hf          = p.Results.Handle;
 ParamVal    = p.Unmatched;
+
+
+%===============================
+%% process setttings and defaults
+%===============================
 
 % number of axes and sets in the data matrix
 [nr_ax,nr_set] = size(data);
@@ -326,6 +333,11 @@ else
     col = Color;
 end
 
+
+%===============================
+%% adjust data based on settings before plotting
+%===============================
+
 % scale by range
 angw = linspace(0,2*pi,nr_ax+1)';
 mag = (data - MinMax(:,1) * ones(1,nr_set)) ./ (diff(MinMax,[],2) * ones(1,nr_set));
@@ -347,7 +359,10 @@ end
 ang = angw(1:end-1); magw = [mag; mag(1,:)];
 
 
-% make the plot
+%===============================
+%% do the actual plotting
+%===============================
+
 % define the axis locations
 start = [zeros(1,nr_ax); cos(ang')]; stop = [zeros(1,nr_ax); sin(ang')];
 % plot the axes
@@ -446,7 +461,7 @@ switch PlotType
         magrep = permute(magrep,[3 1 2]);
         magrep = reshape(magrep,[n*nr_ax nr_set]);
         if ConnContour, magrep(end+1,:) = magrep(1,:); end
-        
+
         % plot the data
         hp = polar(ha,pnts*ones(1,nr_set),magrep);
         hp = hp(:)';
@@ -514,11 +529,14 @@ end
 if ~isempty(LegendCell)
     hl = legend(hp(1,:),LegendCell,'location','best','Interpreter','none');
 end
-    
+
 
 return
 
 
+%===============================
+%% subfunctions
+%===============================
 
 function [v] = rd(v,dec)
 % quick round function (to specified decimal)
@@ -543,3 +561,34 @@ if nargin == 1; dec = 0; end
 v = v / 10^dec;
 v = round(v);
 v = v * 10^dec;
+%--------------------------------------------------------------------------
+
+
+%% Copyright notice
+% based on the file 'spider.m' by Michael Arant, 2008-01-30
+%-------------------------------------------------------------------------
+% Copyright (c) 2014, Michael Arant
+% All rights reserved.
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are
+% met:
+%
+%     * Redistributions of source code must retain the above copyright
+%       notice, this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright
+%       notice, this list of conditions and the following disclaimer in the
+%       documentation and/or other materials provided with the distribution
+%
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+% IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+% THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+% PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+% CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+% EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+% PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+% PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+% LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+% NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+% SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+%--------------------------------------------------------------------------

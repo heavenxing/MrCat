@@ -1,34 +1,40 @@
 function out = manhattan(template,data)
-% function out = manhattan(template,data)
-%
 % Calculate Mahattan distances between vectors
+%--------------------------------------------------------------------------
+% Use
+%   out = manhattan(template,data)
 %
-% Inputs:
+% Input
 %   template    arms*1 template vector
 %   data        arms*spiders data matrix
 %
-% Output:
+% Output
 %   out         1*spiders vector of mahattan distances
 %
-% Rogier B. Mars, University of Oxford, 19112013
-% 02012015 RBM Removed loop to make more efficient
-% 06092015 RBM Cleaned up for GitHub release
+% version history
+% 2015-09-16	Lennart		documentation
+% 2015-09-06  Rogier    Cleaned up for GitHub release
+% 2015-01-02  Rogier    Vectorised for efficiency
+% 2013-11-19  Rogier    created
+%
+% copyright
+% Rogier B. Mars
+% University of Oxford & Donders Institute, 2013-11-19
+%--------------------------------------------------------------------------
 
-%========================================
-% Housekeeping
-%========================================
+
+%===============================
+%% Housekeeping
+%===============================
 
 if size(template,1)~=size(data,1), error('Error in MrCat:mahattan: Size of inputs do not match!'); end
 
-%========================================
-% Do the work
-%========================================
 
-% out = [];
-% for i = 1:size(data,2)
-%     d = sum(abs(template-data2(:,i)));
-%     out = [out d];
-%     clear d;
-% end
+%===============================
+%% Do the work
+%===============================
 
+% vectorised Manhattan distance
+% could be rewritten using bsxfun, but untested
+% out = sum(abs(bsxfun(@minus,template,data)),1);
 out = sum(abs(repmat(template,1,size(data,2)) - data),1);

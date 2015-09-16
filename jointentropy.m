@@ -1,22 +1,39 @@
 function H = jointentropy(data)
-% function H = jointentropy(data)
-%
 % Calculate the joint entropy between the two columns of the matrix in bits
+%--------------------------------------------------------------------------
 %
-% Rogier B. Mars, University of Oxford, 06022014
+% Use
+%   H = jointentropy(data)
+%
+% Input
+%   data  column-wise matrix (n * 2)
+%
+% Output
+%   H     joint entropy
+%
+% version history
+% 2015-09-16	Lennart		documentation
+% 2014-02-06  Rogier    created
+%
+% copyright
+% Rogier B. Mars
+% University of Oxford & Donders Institute, 2014-02-06
+%--------------------------------------------------------------------------
 
-%=========================================================
-% Housekeeping
-%=========================================================
+
+%===============================
+%% Housekeeping
+%===============================
 
 if size(data,2)~=2, error('Error: size(data,2) incorrect in jointentropy.m!'); end
 
 elementsA = unique(data(:,1));
 elementsB = unique(data(:,2));
 
-%=========================================================
-% Do the work
-%=========================================================
+
+%===============================
+%% Do the work
+%===============================
 
 % Get joint probabilities
 jointPs = get_jointprobs(data);

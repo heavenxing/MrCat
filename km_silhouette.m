@@ -1,23 +1,37 @@
-function km_silhouette(idxx,CC,varargin)
-% function km_silhouette(idxx,CC,varargin)
-%
+function km_silhouette(idxx,X,varargin)
 % Evaluate range of kmeans solutions using Matlab's silhouette
+%--------------------------------------------------------------------------
 %
-% Obligatory inputs:
+% Use
+%   km_silhouette(idxx,X)
+%   km_silhouette(idxx,X,'savefig','~/myfig','savesilh','~/mymat')
+%
+% Input
 %   idxx        voxels*number_of_solutions cluster index matrix
-%   CC          matrix submitted to kmeans
+%   X           data matrix submitted to kmeans
 %
-% Optional inputs (using parameter format):
-%   savefig     string with figure basenames
-%   savesilh    string with basename to save silhouette values to *.mat
-%               file
+% Optional (parameter-value pairs)
+%   'savefig'   followed by a string with figure basenames
+%   'savesilh'  followed by a string with basename to save silhouette
+%               values to *.mat file
 %
-% Rogier B. Mars, University of Oxford, 25022014
-% 24112014 RBM Added varargin options to save fig and silh values
+% Output
+%   none        results are reported in a figure
+%
+% version history
+% 2015-09-16	Lennart		documentation
+% 2014-11-24  Rogier    Added varargin options to save fig and silh values
+% 2014-02-25  Rogier    created
+%
+% copyright
+% Rogier B. Mars
+% University of Oxford & Donders Institute, 2014-02-25
+%--------------------------------------------------------------------------
 
-%==================================================
-% Housekeeping
-%==================================================
+
+%===============================
+%% housekeeping
+%===============================
 
 savefig = [];
 savesilh = [];
@@ -34,28 +48,29 @@ if nargin>2
     end
 end
 
-%==================================================
-% Do the work
-%==================================================
+
+%===============================
+%% Do the work
+%===============================
 
 nsolutions = size(idxx,2);
 
 h = figure; hold on; plotnr = 1;
 
 for cc = 1:size(idxx,2)
-    
+
     fprintf('Silhouette: %i clusters...\n',max(idxx(:,cc)));
     subplot(ceil(nsolutions/3),3,plotnr);
-    [silh,h] = silhouette(CC,idxx(:,cc),'sqeuclid');
+    [silh,h] = silhouette(X,idxx(:,cc),'sqeuclid');
     set(get(gca,'Children'),'FaceColor',[.8 .8 1])
     xlabel('Silhouette Value');
     ylabel('Cluster');
     title([num2str(max(idxx(:,cc))) ' cluster solution']);
     plotnr = plotnr + 1;
-    
+
     allsilh{cc} = silh;
     % save allsilh allsilh
-    
+
 end
 
 if ~isempty(savefig)
@@ -67,9 +82,10 @@ end
 
 hold off;
 
-%==================================================
-% Report group measures
-%==================================================
+
+%===============================
+%% Report group measures
+%===============================
 
 for cc = 1:size(idxx,2)
     meansilh(cc) = mean(allsilh{cc});

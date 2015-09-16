@@ -1,38 +1,50 @@
 function glass_projection(data,glass,varargin)
-% function glass_projection(data,glass,varargin)
+% Produce SPM-like glass brain projection. Assumes the glass brain and the
+% data are in the same space. Data will be normalized using normalize0.
+% Note that when images are FSL .nii.gz images read in using read_avw, this
+% function will display results in radiological convention
+%--------------------------------------------------------------------------
 %
-% Produce SPM-like glass brain projection
+% Use
+%   glass_projection(data,glass)
+%   glass_projection(data,glass,varargin)
 %
-% Inputs:
+% Input
 %   data        3D matrix
 %   glass       3D matrix containing brain to be used for creating glass brain
 %
-% Optional inputs (using parameter format):
+% Optional (parameter-value pairs)
 %   extraplot   produce extra plots, options: 'brain'
 %   orientation 'data' (default) or 'flipx'
 %   ROI         cut out region of interest in datapoints [xmin xmax ymin ymax zmin zmax]
 %   toplot      string with plot name (without extension)
 %
-% Assumes the glass brain and the data are in the same space. Data will be
-% normalized using normalize0
+% Output
+%   none        results are reported in a figure
 %
-% Note that when images are FSL .nii.gz images read in using read_avw, this
-% function will display results in radiological convention
+% version history
+% 2015-09-16	Lennart		documentation
+% 2015-08-27  Rogier    Cleaned up for GitHub release
+% 2015-08-27  Rogier    Added normalize0 as subfunction
+% 2015-03-06  Rogier    Changed combining glass and data to improve glass scaling
+% 2014-10-27  Rogier    Added scaling of glass outline to maximum value of data
+% 2014-06-30  Rogier    Added option to flipx (switch radiological/neurological)
+% 2014-06-19  Rogier    Added option to save plot to disk
+% 2014-06-16  Rogier    Added varargin ability to plot brain itself and ROI
+% 2014-06-13  Rogier    Added ability to handle empty data
+% 2014-03-11  Rogier    Added table output and corrected figure axes orientation
+% 2013-03-28  Rogier    Completed using normalize0
+% 2013-01-18  Rogier    created
 %
-% Rogier B. Mars, 18012013, University of Oxford
-% 28032013 RBM Completed using normalize0
-% 11032014 RBM Added table output and corrected figure axes orientation
-% 13062014 RBM Added ability to handle empty data
-% 16062014 RBM Added varargin ability to plot brain itself and ROI
-% 19062014 RBM Added option to save plot to disk
-% 30062014 RBM Added option to flipx (switch radiological/neurological)
-% 27102014 RBM Added scaling of glass outline to maximum value of data
-% 06032015 RBM Changed combining glass and data to improve glass scaling
-% 27082015 RBM Cleaned up for GitHub and added normalize0 as subfunction
+% copyright
+% Rogier B. Mars
+% University of Oxford & Donders Institute, 2013-01-18
+%--------------------------------------------------------------------------
 
-%===============================================
-% Housekeeping
-%===============================================
+
+%===============================
+%% Housekeeping
+%===============================
 
 if ~isempty(data) && ~isequal(size(data),size(glass)), error('Error: inputs not of the same size!'); end
 
@@ -57,9 +69,10 @@ if nargin>2
     end
 end
 
-%===============================================
-% Prepare glass
-%===============================================
+
+%===============================
+%% Prepare glass
+%===============================
 
 % Cut out ROI (if required)
 if ~isempty(ROI), glass = glass(ROI(1):ROI(2),ROI(3):ROI(4),ROI(5):ROI(6)); end
@@ -92,34 +105,36 @@ glass_axial = edge(glass_axial);
 % subplot(2,2,1); imagesc(glass_cor); title('Coronal');
 % subplot(2,2,3); imagesc(glass_axial); title('Axial');
 
-%===============================================
-% Prepare data
-%===============================================
+
+%===============================
+%% Prepare data
+%===============================
 
 if ~isempty(data)
-    
+
     % Cut out ROI (if required)
     if ~isempty(ROI), data = data(ROI(1):ROI(2),ROI(3):ROI(4),ROI(5):ROI(6)); end
-    
+
     % Saggital
     data_sag = max(data,[],1);
     data_sag = reshape(data_sag,size(data_sag,2),size(data_sag,3));
     data_sag = rot90(data_sag);
-    
+
     % Coronal
     data_cor = max(data,[],2);
     data_cor = reshape(data_cor,size(data_cor,1),size(data_cor,3));
     data_cor = rot90(data_cor);
-    
+
     % Axial
     data_axial = max(data,[],3);
     data_axial = rot90(data_axial);
-    
+
 end
 
-%===============================================
-% Combine and display
-%===============================================
+
+%===============================
+%% Combine and display
+%===============================
 
 figure; colormap(gray);
 
@@ -127,17 +142,17 @@ figure; colormap(gray);
 maxdatavalue = max(data(:));
 
 if ~isempty(data)
-    
+
     % Saggital
     img = data_sag;
     img(find(glass_sag)) = maxdatavalue;
-    switch orientation    
+    switch orientation
         case 'data'
             subplot(2,2,2); imagesc(flipud(img)); title('Saggital'); set(gca,'YDir','normal');
         case 'flipx'
             subplot(1,3,3); imagesc(fliplr(flipud(img))); title('Saggital'); set(gca,'YDir','normal');
     end
-    
+
     % Coronal
     img = data_cor;
     img(find(glass_cor)) = maxdatavalue;
@@ -147,7 +162,7 @@ if ~isempty(data)
         case 'flipx'
             subplot(1,3,1); imagesc(fliplr(flipud(img))); title('Coronal'); set(gca,'YDir','normal');
     end
-    
+
     % Axial
     img = data_axial;
     img(find(glass_axial)) = maxdatavalue;
@@ -157,9 +172,9 @@ if ~isempty(data)
         case 'flipx'
             subplot(1,3,2); imagesc(fliplr(flipud(img))); title('Axial'); set(gca,'YDir','normal');
     end
-    
+
 elseif isempty(data)
-    
+
     % Saggital
     switch orientation
         case 'data'
@@ -167,7 +182,7 @@ elseif isempty(data)
         case 'flipx'
             subplot(2,2,2); imagesc(fliplr(flipud(glass_sag))); title('Saggital'); set(gca,'YDir','normal');
     end
-    
+
     % Coronal
     switch orientation
         case 'data'
@@ -175,7 +190,7 @@ elseif isempty(data)
         case 'flipx'
             subplot(2,2,1); imagesc(fliplr(flipud(glass_cor))); title('Coronal'); set(gca,'YDir','normal');
     end
-    
+
     % Axial
     switch orientation
         case 'data'
@@ -183,7 +198,7 @@ elseif isempty(data)
         case 'flipx'
             subplot(2,2,3); imagesc(fliplr(flipud(glass_axial))); title('Axial'); set(gca,'YDir','normal');
     end
-    
+
 end
 
 % Save figure to disk (if required)
@@ -191,22 +206,23 @@ if ~isempty(toplot)
     saveas(gcf, toplot, 'png' );
 end
 
-%===============================================
-% Create table
-%===============================================
+
+%===============================
+%% Create table
+%===============================
 
 if ~isempty(data)
-    
+
     data = binarize(normalize0(data));
     bw = bwconncomp(data);
-    
+
     % Collect cluster sizes
     clustsizes = [];
     for c = 1:bw.NumObjects
         clustsizes = [clustsizes; [c length(bw.PixelIdxList{c})]];
     end
     clustsizes = sortrows(clustsizes,-2);
-    
+
     fprintf('Glass brain projection clusters (by size):\n');
     fprintf('Clust_ID\tClust_loc\tClust_size\n');
     fprintf('==========================================\n');
@@ -215,45 +231,47 @@ if ~isempty(data)
         [i,j,k] = ind2sub(size(data),find(data==1));
         fprintf('%i\t\t%i %i %i\t%i\n',clustsizes(c,1),i,j,k,clustsizes(c,2));
     end
-        
+
 end
 
-%===============================================
-% Optional additional plotting
-%===============================================
+
+%===============================
+%% Optional additional plotting
+%===============================
 
 if ~isempty(extraplots)
-    
+
     figure; colormap(gray);
-    
+
     % Saggital
     glass_sag = mean(orig_glass,1);
     glass_sag = reshape(glass_sag,size(glass_sag,2),size(glass_sag,3));
     glass_sag = normalize1(rot90(glass_sag));
-    
+
     % Coronal
     glass_cor = mean(orig_glass,2);
     glass_cor = reshape(glass_cor,size(glass_cor,1),size(glass_cor,3));
     glass_cor = normalize1(rot90(glass_cor));
-    
+
     % Axial
     glass_axial = mean(orig_glass,3);
     glass_axial = normalize1(rot90(glass_axial));
-    
+
     % Saggital
     subplot(2,2,2); imagesc(flipud(glass_sag)); title('Saggital'); set(gca,'YDir','normal');
-    
+
     % Coronal
     subplot(2,2,1); imagesc(flipud(glass_cor)); title('Coronal'); set(gca,'YDir','normal');
-    
+
     % Axial
     subplot(2,2,3); imagesc(flipud(glass_axial)); title('Axial'); set(gca,'YDir','normal');
-    
+
 end
 
-%===============================================
-% Subfunction
-%===============================================
+
+%===============================
+%% sub functions
+%===============================
 
 function output = normalize0(input)
 % function output = normalize0(input)

@@ -1,18 +1,6 @@
 function [hf,S,T,L] = tract3D(varargin)
-% Display probabilistic tracts in 3D on top of a structural image
-%
-%
-% IDEAS:
-%   - properly allow for cell entries as Tract and Struc
-%   - remove small patch volumes of the tracts
-%       - either by multiplying the tract by a smoothed binary mask at the
-%         desidred isosurface threshold. Prehaps patches to ignore should
-%         not be set to 0, but to a value just below the threshold.
-%       - or loop over all patches and calculate the volume of each
-%         self-contained component and threshold. Probably too slow
-%  - do some hole filling after thresholding the structural, or use a brain
-%    mask to get the structural
-%
+% Display probabilistic tracts and structural images in 3D
+%--------------------------------------------------------------------------
 %
 % Use
 %   tract3D('Tract','default','Struc','default','Param','Value')
@@ -21,14 +9,14 @@ function [hf,S,T,L] = tract3D(varargin)
 %   Tract       name of the probtrack path image to plot (.nii.gz)
 %   Struc       name of the structural image to plot onto (.nii.gz)
 %
-% Optional parameter-value pair input
+% Optional (parameter-value pairs)
 %   Handle      figure or plot handle
 %   DrawStruc   boolean to draw structural image if it exists [true] or a
-%               structure with settings (see GetSettings)
+%               structure with settings (see below)
 %   DrawTract   boolean to draw probtrack image if it exists [true] or a
-%               structure with settings (see GetSettings)
+%               structure with settings (see below)
 %   DrawLight   boolean to draw viewing and lighting options [true] or a
-%               structure with settings (see GetSettings)
+%               structure with settings (see below)
 %   GetDrawSet  'struc', 'tract', 'light', 'none' ['none']
 %               If any other value than 'none' this function will output
 %               the current settings to draw the requested section and
@@ -46,7 +34,7 @@ function [hf,S,T,L] = tract3D(varargin)
 %
 % Input structures
 %-------------------------------
-% Structural (settings for drawing the background)
+% Structural (settings for drawing a structural image)
 %   S.draw          boolean, draw the structural or not [true]
 %   S.flipLR        boolean, flip the brain left-right [false]
 %   S.surf.vol      specification for the volume to draw used as input for
@@ -102,7 +90,20 @@ function [hf,S,T,L] = tract3D(varargin)
 %
 %-------------------------------
 %
+% DEVELOPMENT IDEAS:
+%   - properly allow for cell entries as Tract and Struc
+%   - remove small patch volumes of the tracts
+%       - either by multiplying the tract by a smoothed binary mask at the
+%         desidred isosurface threshold. Prehaps patches to ignore should
+%         not be set to 0, but to a value just below the threshold.
+%       - or loop over all patches and calculate the volume of each
+%         self-contained component and threshold. Probably too slow
+%  - do some hole filling after thresholding the structural, or use a brain
+%    mask to get the structural
+%
+%
 % version history
+% 2015-09-16	Lennart		documentation
 % 2015-09-16  Lennart   added lightangle, added 'mni' option for Struc
 % 2015-09-14  Lennart   swapped x and y dimensions to match MRI convention
 % 2015-09-14  Lennart   now plotting images in mm not vox
@@ -111,13 +112,16 @@ function [hf,S,T,L] = tract3D(varargin)
 % 2015-02-23	Lennart   changed lighting, slice, and cut options
 % 2015-02-17	Lennart   created
 %
+% copyright
 % Lennart Verhagen & Rogier B. Mars
-% University of Oxford, 2015-02-01
+% University of Oxford & Donders Institute, 2015-02-01
 %--------------------------------------------------------------------------
 
 
+%===============================
 %% housekeeping
-%-------------------------------
+%===============================
+
 % parse input arguments based on input, default and expected values
 p = inputParser;
 p.KeepUnmatched = true;
@@ -176,8 +180,10 @@ end
 [hf,ha] = get_figure(hf);
 
 
+%===============================
 %% read in images
-%-------------------------------
+%===============================
+
 % process structural image
 if S.draw
   % expand fname and load structural images
@@ -193,20 +199,23 @@ if T.draw
   % expand fname and load tract images
   [T.img,T.dims,T.scale,T.hdr,T.fname] = read_avw_multi(FnameTract);
   T.nr = T.dims(4);
-  
+
   % define tracts colors
   T = get_color(T,ha);
-  
+
   % define thresholds
   T = get_threshold(T);
-  
+
   % set FaceAlpha based on Threshold
   T = get_alpha(T);
 end
 
 
-%% draw structural
-%-------------------------------
+%===============================
+%% draw structural, tracts, and add lighting
+%===============================
+
+% draw structural
 if S.draw
   S = draw_struc(S);
   lighting(L.lighting);
@@ -214,8 +223,7 @@ if S.draw
 end
 
 
-%% draw thresholded tracts
-%-------------------------------
+% draw thresholded tracts
 if T.draw
   T.h.patch = draw_tract(T);
   lighting(L.lighting);
@@ -223,15 +231,16 @@ if T.draw
 end
 
 
-%% draw lightning tracts
-%-------------------------------
+% add lightning
 if L.draw
   L.h = draw_light(L);
 end
 
 
+%===============================
 %% sub functions
-%-------------------------------
+%===============================
+
 function S = get_DrawStruc(DrawStruc)
 S.draw          = isstruct(DrawStruc) || DrawStruc;
 S.flipLR        = false;
@@ -279,9 +288,9 @@ end
 if size(S.slice.ax.vol,2) > 1 && size(S.slice.ax.vol,2) ~= 6,
   S.slice.ax.vol = S.slice.ax.vol';
 end
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function T = get_DrawTract(DrawTract)
 T.draw          = isstruct(DrawTract) || DrawTract;
 T.flipLR        = false;
@@ -297,9 +306,9 @@ if islogical(DrawTract), return; end
 
 % combine defaults with current settings
 T = combstruct(T,DrawTract);
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function L = get_DrawLight(DrawLight)
 L.draw          = isstruct(DrawLight) || DrawLight;
 L.daspect       = [1 1 1];
@@ -331,9 +340,9 @@ end
 if isempty(L.light) && isempty(L.lightangle) && isempty(L.camlight)
   L.camlight = {'right','left'};
 end
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function [hf,ha] = get_figure(hf)
 % check for figure or axes
 flg_newfig = true;
@@ -376,9 +385,9 @@ if flg_newfig
     set(ha,'Visible','off');
   end
 end
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function T = get_color(T,ha)
 % define tracts colors
 if isempty(T.color) || ischar(T.color) && ismember(T.color,{'default','auto'})
@@ -402,9 +411,9 @@ end
 if size(T.color,1) < T.nr
   error('The number of specified colours [%g] does not match the number of tracts [%g].',size(T.color,1),T.nr);
 end
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function T = get_threshold(T)
 
 % ensure there is a threshold set for each image (copy if necessary)
@@ -431,9 +440,9 @@ end
 % sort
 T.thr = sort(T.thr,2,'descend');
 T.nr_thr = size(T.thr,2);
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function T = get_alpha(T)
 % set FaceAlpha based on threshold
 if isempty(T.alpha)
@@ -454,9 +463,9 @@ if length(T.alpha) ~= T.nr_thr
   error('The number of FaceAlpha values [%g] does not the number of Threshold values [%g]',length(alpha),T.nr_thr);
 end
 T.alpha = sort(T.alpha,'descend');
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function S = draw_struc(S)
 % swap X and Y dimensions
 S.img = permute(S.img,[2 1 3]);
@@ -494,14 +503,14 @@ S.h.slice   = draw_struc_slice(S);
 % set colormap and range
 colormap(S.colormap);
 caxis(S.CLim);
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function hsurf = draw_struc_surf(S)
 % loop over surfaces
 for s = 1:length(S.surf)
   if isempty(S.surf(s).vol) || isequal(S.surf(s).vol,'none'), hsurf(s) = 0; return; end
-  
+
   % set the limits of the volume
   if ischar(S.surf(s).vol)
     switch lower(S.surf(s).vol)
@@ -512,7 +521,7 @@ for s = 1:length(S.surf)
   else
     lim = S.surf(s).vol;
   end
-  
+
   % extract the volume
   [xV,yV,zV,V] = subvolume(S.x,S.y,S.z,S.img,lim);
   % draw the surface
@@ -523,16 +532,16 @@ for s = 1:length(S.surf)
   set(hsurf(s),'FaceColor',S.surf(s).color);
   set(hsurf(s),'EdgeColor','none');
   isonormals(xV,yV,zV,V,hsurf(s));
-  
-end
-%-------------------------------
 
-%-------------------------------
+end
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
 function hcut = draw_struc_cut(S)
 % loop over cuts
 for c = 1:length(S.cut)
   if isempty(S.cut(c).vol) || isequal(S.cut(c).vol,'none'), hcut(c) = 0; return; end
-  
+
   % set the limits of the volume
   if ischar(S.cut(c).vol)
     switch lower(S.cut(c).vol)
@@ -543,7 +552,7 @@ for c = 1:length(S.cut)
   else
     lim = S.cut(c).vol;
   end
-  
+
   % extract the volume
   [xV,yV,zV,V] = subvolume(S.x,S.y,S.z,S.img,lim);
   % draw the cutting plane (sagittal)
@@ -555,9 +564,9 @@ for c = 1:length(S.cut)
   set(hcut(c),'EdgeColor','none');
   set(hcut(c),'FaceAlpha',S.cut(c).alpha);
 end
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function h = draw_struc_slice(S)
 h = [];
 % draw slices if requested
@@ -609,16 +618,16 @@ if ~isempty(S.slice.ax.vol) && ~isequal(S.slice.ax.vol,'none')
     set(h.ax{v},'FaceAlpha',S.slice.ax.alpha);
   end
 end
-%-------------------------------
+%--------------------------------------------------------------------------
 
-%-------------------------------
+%--------------------------------------------------------------------------
 function h = draw_tract(T)
 % draw tracts
 
 % loop over tracts
 h = cell(T.nr,T.nr_thr);
 for t = 1:T.nr
-  
+
   % extract the data
   img = T.img(:,:,:,t);
   % swap X and Y dimensions
@@ -639,7 +648,7 @@ for t = 1:T.nr
   if ~strcmpi(T.smooth.mode,'none')
     img = smooth3(img,T.smooth.mode,T.smooth.kernel);
   end
-  
+
   % get [x y z] positions
   [m,n,p] = size(img);
   [x,y,z] = meshgrid(0:n-1,0:m-1,0:p-1);
@@ -648,7 +657,7 @@ for t = 1:T.nr
   x = reshape(xyz(:,1),m,n,p);
   y = reshape(xyz(:,2),m,n,p);
   z = reshape(xyz(:,3),m,n,p);
-  
+
   % loop over thresholds and plot progressively
   for p = 1:T.nr_thr
     h{t,p} = patch(isosurface(x,y,z,img,T.thr(t,p)));
@@ -662,11 +671,11 @@ for t = 1:T.nr
     set(h{t,p},'FaceAlpha',T.alpha(p));
     hold on;
   end
-  
-end
-%-------------------------------
 
-%-------------------------------
+end
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
 function h = draw_light(L)
 % set view and lighting
 daspect(L.daspect);

@@ -1,21 +1,23 @@
 function stats = sm_comparegroups(data1,data2,nperms,method,varargin)
-% function stats = sm_comparegroups(data1,data2,nperms,method,varargin)
-%
 % Compare two groups of spiders
+%--------------------------------------------------------------------------
 %
-% Inputs:
+% Use
+%   stats = sm_comparegroups(data1,data2,nperms,method,varargin)
+%
+% Input
 %   data1       number_of_arms*number_of_subjects_group1 matrix of spiders
 %   data2       number_of_arms*number_of_subjects_group2 matrix of spiders
 %   nperms      number of permutations to perform
 %   method      'manhattan' or 'cosine_similarity'
 %
-% Optional inputs (using parameter format):
+% Optional (parameter-value pairs)
 %   normalize   normalization method 'normalize0', 'none',
 %               'normalize0_all' (normalize over the whole of the two
 %               groups, default)
 %   plottitle   empty or string containing plot title
 %
-% Ouput:
+% Ouput
 %   stats.
 %       actual      statistic of the actual data
 %       criterion   maximum value from which data is not significant
@@ -24,18 +26,28 @@ function stats = sm_comparegroups(data1,data2,nperms,method,varargin)
 %       permutedD   statistics resulting from all permutations
 %       result      string indicating whether match with template was significant
 %
-% Calls: manhattan.m, cosine_similarity.m
+% Dependency
+%   manhattan.m
+%   cosine_similarity.m
 %
-% Rogier B. Mars, University of Oxford, 30122014
-% 04012015 RBM Added cosine similarity method
-% 24042015 RBM Added varargin and normalize option
-% 28042015 RBM Added normalize0_all option and made that the default
-% 12082015 RBM Added plottitle option
-% 06092015 RBM Cleaned up for GitHub release
+% version history
+% 2015-09-16	Lennart		documentation
+% 2015-09-06  Rogier    Cleaned up for GitHub release
+% 2015-08-12  Rogier    Added plottitle option
+% 2015-04-28  Rogier    Added normalize0_all option and made default
+% 2015-04-24  Rogier    Added varargin and normalize option
+% 2015-01-04  Rogier    Added cosine similarity method
+% 2014-12-30  Rogier    created
+%
+% copyright
+% Rogier B. Mars
+% University of Oxford & Donders Institute, 2014-12-30
+%--------------------------------------------------------------------------
 
-%===============================================
-% Housekeeping
-%===============================================
+
+%===============================
+%% Housekeeping
+%===============================
 
 stats.nperms = nperms;
 
@@ -60,9 +72,10 @@ end
 % Log stuff
 stats.log.normalize = normalize;
 
-%===============================================
-% Determine permutations
-%===============================================
+
+%===============================
+%% Determine permutations
+%===============================
 
 fprintf('Determining permutations...\n');
 
@@ -71,9 +84,10 @@ for p = 1:nperms
     perms = [perms; randomize_vector([ones(1,size(data1,2)) ones(1,size(data2,2))*2])];
 end
 
-%===============================================
-% Determine actual statistic
-%===============================================
+
+%===============================
+%% Determine actual statistic
+%===============================
 
 fprintf('Calculating actual statistic...\n');
 
@@ -102,9 +116,10 @@ switch method
         end
 end
 
-%===============================================
-% Perform permutations
-%===============================================
+
+%===============================
+%% Perform permutations
+%===============================
 
 fprintf('Performing permutations...\n');
 
@@ -112,11 +127,11 @@ data = [data1 data2];
 
 permutedD = stats.actual;
 for p = 1:stats.nperms
-    
+
     % Permute
     curr_data1 = data(:,find(perms(p,:)==1));
     curr_data2 = data(:,find(perms(p,:)==2));
-    
+
     % Statistic
     switch method
         case 'manhattan'
@@ -142,12 +157,13 @@ for p = 1:stats.nperms
                     permutedD = [permutedD cosine_similarity(spider_data(1:size(data1,1)),spider_data(size(data1,1)+1:size(data1,1)+size(data2,1)))];
             end
     end
-    
+
 end
 
-%===============================================
-% Determine criterion and report (this section needs tidying up)
-%===============================================
+
+%===============================
+%% Determine criterion and report (this section needs tidying up)
+%===============================
 
 fprintf('Determining criterion...\n');
 
@@ -156,9 +172,9 @@ stats.permutedD = permutedD;
 
 loc = find(sort(permutedD)==stats.actual);
 
-%--------------------------------------
+%-------------------------------
 % p value
-%--------------------------------------
+%-------------------------------
 
 switch method
     case 'manhattan'
@@ -167,9 +183,9 @@ switch method
         stats.p = (length(find(sort(permutedD)<=stats.actual)) /length(permutedD));
 end
 
-%--------------------------------------
+%-------------------------------
 % criterion
-%--------------------------------------
+%-------------------------------
 
 switch method
     case 'manhattan'
@@ -178,9 +194,9 @@ switch method
         stats.criterion = permutedD(ceil(0.05*length(permutedD)));
 end
 
-%--------------------------------------
+%-------------------------------
 % plot
-%--------------------------------------
+%-------------------------------
 
 myhist = hist(permutedD,25); figure; hist(permutedD,25); hold on;
 cl = line([stats.criterion stats.criterion],[0 max(myhist)+1]); set(cl,'color','b');
@@ -189,9 +205,9 @@ legend('Perm data','Criterion','Actual data');
 title(plottitle);
 hold off;
 
-%--------------------------------------
+%-------------------------------
 % Determine significance
-%--------------------------------------
+%-------------------------------
 
 switch method
     case 'manhattan'
@@ -212,16 +228,19 @@ fprintf('%s\n',stats.result);
 
 fprintf('Done!\n');
 
-%===============================================
-% Subfunctions
-%===============================================
+
+%===============================
+%% sub functions
+%===============================
 
 function output = randomize_rows(matrix)
 
 matrix = [matrix randperm(size(matrix,1))'];
 matrix = sortrows(matrix,size(matrix,2));
 output = matrix(:,1:size(matrix,2)-1);
+%--------------------------------------------------------------------------
 
+%--------------------------------------------------------------------------
 function output = randomize_vector(input)
 
 if size(input,1)>size(input,2)
@@ -241,15 +260,22 @@ switch orientation
         input = input(:,1);
         output = input';
 end
+%--------------------------------------------------------------------------
 
+%--------------------------------------------------------------------------
 function output = normalize0(input)
-% function output = normalize0(input)
-%
 % As normalize1.m, but returning vector normalized between 0 and 1 instead
 % of between -1 and 1.
+%--------------------------------------------------------------------------
+% version history
+% 2015-09-16	Lennart		documentation
+% 2013-03-28  Rogier    Adapted to suit both 2D and 3D matrices
+% 2013-01-31  Rogier    created
 %
-% Rogier B. Mars, University of Oxford, 31012013
-% 28032013 RBM Adapted to suit both 2D and 3D matrices
+% copyright
+% Rogier B. Mars
+% University of Oxford & Donders Institute, 2013-01-31
+%--------------------------------------------------------------------------
 
 orig_size = size(input);
 

@@ -1,31 +1,41 @@
 function perms = sm_findpermutations(nsubjects,narms,nperms)
-% function perms = sm_findpermutations(nsubjects,narms,nperms)
-%
 % Create permutations for sm_compare2template.m
+% This is a simplified version of sm_findpermutations2 for GitHub release.
+% Currently only supports quick, random permutation search.
+%--------------------------------------------------------------------------
 %
-% Obligatory inputs:
+% Use
+%   perms = sm_findpermutations(nsubjects,narms,nperms)
+%
+% Input
 %   nsubjects   number of exchangeability blocks
 %   narms       number of elements/units per block
 %   nperms      number of permutations to returns
 %
-% Output:
+% Output
 %   perms       permutations matrix, each as a rows vector of format
 %               [subj1_arm_order subj2_arm_order subj3_arm_order...]
 %
-% This is a simplified version of sm_findpermutations2 for GitHub release.
-% Currently only supports quick, random permutation search
+% version history
+% 2015-09-16	Lennart		documentation
+% 2015-09-06  Rogier    created
 %
-% Rogier B. Mars, University of Oxford, 06092015
+% copyright
+% Rogier B. Mars
+% University of Oxford & Donders Institute, 2015-09-06
+%--------------------------------------------------------------------------
 
-%======================================================
-% Housekeeping
-%======================================================
+
+%===============================
+%% Housekeeping
+%===============================
 
 fprintf('Exhaustive test would need %i permutations...\n',factorial(narms)^nsubjects);
 
-%======================================================
-% Do the work
-%======================================================
+
+%===============================
+%% Do the work
+%===============================
 
 perms = [];
 for p = 1:nperms
@@ -36,9 +46,10 @@ for p = 1:nperms
     perms = [perms; curr_perm]; clear curr_perm;
 end
 
-%===============================================
-% Subfunctions
-%===============================================
+
+%===============================
+%% Subfunctions
+%===============================
 
 function output = randomize_vector(input)
 

@@ -15,6 +15,7 @@ function out = log_threshold(data,perc_threshold)
 %   out             the log transformed data
 %
 % version history
+% 2015-10-13 Rogier     Better dealing with values of 0
 % 2015-09-16	Lennart		documentation
 % 2013-05-16  Rogier    Changed order to: log transform, normalize, thresh
 % 2013-05-10  Rogier    clean-up and documentation
@@ -38,8 +39,11 @@ if vizdata==1, figure; subplot(1,4,1); hist(data(find(data(:)>0))); end
 %% Log transform
 %===============================
 
-data(find(data>0)) = log(data(find(data>0)));
-% logdata = sort(log(data(find(data>0))));
+if min(data(:))<0, error('Error in MrCat:log_threshold.m: Min data value < 0!'); end
+
+data = data + 1;
+data = log(data);
+
 
 if vizdata==1, subplot(1,4,2); hist(data(find(data(:)>0))); end
 

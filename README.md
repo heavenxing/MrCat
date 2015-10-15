@@ -16,6 +16,8 @@ K-means can be sensitive to the initiation, multiple methods are implemented and
 
 Visualizing the results can be done by showing the reordered connectivity matrix using `sort_CC_matrix.m`. The solutions can be evaluated using the hierarchy index described by Kahnt et al. (2012, J Neurosci) using `km_hierarchyindex.m`, the silhouette measure (Rousseeuw, 1987, J Computat Appl Math) as implemented in Matlab and called using  wrapper `km_silhouette.m`, and the variation of information (Meila, 2007, J Multivar Anal) using `km_vi.m` (which calls `columnentropy.m` and `mutualinformation.m`).
 
+To deal with the output of FSL's probtrackx2, we have written a wrapper called `kmeans_fdt.m` that calls all the above scripts.
+
 #### Visualization
 
 Visualizing tractography results across a whole brain is difficult. We have found that using the SPM-like maximum intensity projection (‘glass brain’; `glass_projection.m`) is quite effective to quickly see where in the whole brain a tract goes.Publication quality figures of the course of tracts are produced using `tract3D.m`.Connectivity profiles can often be summarized as a connectivity fingerprint (cf. Passingham et al., 2002, Nat Rev Neurosci). In order to do to so effectively we use `spider_wedge.m`.To deal with the skewed distribution of the fdt_paths resulting from FSL probtrackx we often log transform and maximum normalize them using `log_threshold.m`.#### Connectivity fingerprint matching

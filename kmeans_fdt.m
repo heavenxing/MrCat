@@ -1,14 +1,9 @@
 function kmeans_fdt(fdt_matrix2_file,fdt_paths_file,coords_for_fdt_matrix2_file,number_of_clusters,varargin)
 % Wrapper to run simple kmeans clustering on the output of FSL's probtrackx
 % ran with --omatrix2 option. Calculates cross-correlation matrix of fdt_matrix2,
-<<<<<<< HEAD
 % runs kmeans, writes results to disk, and evaluates using the silhouette measure.
 % Cross-correlation matrix file can also be given as input argument, since
 % this can be time consuming to calculate
-=======
-% runs kmeans, and writes results to disk. Cross-correlation matrix file can
-% also be given as input argument, since this can be time consuming to calculate
->>>>>>> origin/master
 %--------------------------------------------------------------------------
 %
 % Use
@@ -36,6 +31,8 @@ function kmeans_fdt(fdt_matrix2_file,fdt_paths_file,coords_for_fdt_matrix2_file,
 %               directory as clusters_*
 %
 % version history
+% 2015-10-23    Rogier  fixed conflicts associated with previous erroneous
+%               GitHub misuse
 % 2015-10-14	Rogier  created
 %
 % copyright
@@ -128,11 +125,7 @@ for c = number_of_clusters
 
     % MrCat kmeans
     Cinit = km_init(CC,c,Cinit_method,n_repeats); % Determine kmeans starting values
-<<<<<<< HEAD
-    idx = kmeans_fast(CC,c,'n_repeats',n_repeats,'Cinit',Cinit); % Perform kmeans
-=======
     idx = kmeans_fast(CC,c,'replicates',n_repeats,'Cinit',Cinit); % Perform kmeans
->>>>>>> origin/master
 
     %--------------------------------------------
     % Collect results
@@ -167,16 +160,7 @@ fprintf('done kmeans\n');
 
 fprintf('Evaluating results...\n');
 
-<<<<<<< HEAD
 km_silhouette(kmeans_solutions,CC);
-=======
-% fprintf('...Hierarchy index...\n');
-% HI = km_hierarchyindex(kmeans_solutions,10^6);
-fprintf('...Silhouette...\n');
-km_silhouette(kmeans_solutions,CC);
-% fprintf('...Variation of information...\n');
-% VI = km_vi(kmeans_solutions);
->>>>>>> origin/master
 
 fprintf('done\n');
 

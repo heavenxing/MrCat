@@ -8,6 +8,12 @@ Please note that all code are made available purely as a pilot project and you a
 
 Below follows a short description of how we used the scripts and functions currently available.
 
+#### File handling
+
+There are many types of neuroimaging files, a number of which need specific toolboxes to read them into Matlab. The wrapper `readimgfile.m` allows you to specify any file to read in and calls the correct toolbox. Note that this requires [FSL](http://www.fmrib.ox.ac.uk/fsl), Guillaume Flandin's [GIFTI toolbox](http://www.artefact.tk/software/matlab/gifti/), and the [Connectome Workbench](http://www.humanconnectome.org/software/connectome-workbench.html) to all be in the Matlab path.
+
+To read in CIFTI files, `readimgfile.m` calls `opencifti.m` that first converts the file to GIFTI and then reads it in.
+
 #### K-means
 
 K-means clustering is already well implemented in Matlab’s stats toolbox. However, we have implemented some separate versions and add-ons, partly to allow one to play with the algorithms. A fast k-means algorithm is implemented in `kmeans_fast.m`.

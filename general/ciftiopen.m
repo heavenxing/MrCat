@@ -2,7 +2,7 @@ function data = ciftiopen(filename,wb_command)
 % function data = ciftiopen(filename,wb_command)
 %
 % Open a CIFTI file by converting to GIFTI external binary first and then
-% using the GIFTI toolbox. Based on Saad Jbabdi's original
+% using the GIFTI toolbox. Based on Saad's original
 %--------------------------------------------------------------------------
 %
 % Use:
@@ -19,7 +19,7 @@ function data = ciftiopen(filename,wb_command)
 %   wb_command  string containing link to wb_command version to be used
 %
 % version history
-%   2016-05-26  Rogier  created based on Saad Jbabdi's original
+%   2016-05-26  Rogier  created based on Saad's original
 %
 % copyright
 %   Rogier B. Mars

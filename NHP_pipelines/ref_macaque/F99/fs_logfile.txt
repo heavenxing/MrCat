@@ -1,0 +1,15 @@
+Running FreeSurfer pipeline
+
+Start: 02-Aug-2016 15:37:07
+
+Environment variables
+Home directory: /Users/rogiermars
+FSL directory: /usr/local/fsl
+FSL executables directory: /usr/local/fsl/bin
+FreeSurfer home: /Applications/freesurfer
+FreeSurfer SUBJECTs_DIR: $FREESURFER_HOME/subjects
+FreeSurfer SUBJECT_ID: F99
+
+Input T1w file: /Users/rogiermars/code/MrCat-dev/ref_macaque/F99/F99.nii.gz
+
+Species: MACAQUE

@@ -1,0 +1,146 @@
+
+type  = integer-attribute
+name  = DATASET_RANK
+count = 2
+      3 1 
+
+type  = integer-attribute
+name  = DATASET_DIMENSIONS
+count = 3
+      128 160 128 
+
+type  = string-attribute
+name  = TYPESTRING
+count  = 15
+'3DIM_HEAD_ANAT~
+
+type  = integer-attribute
+name  = SCENE_DATA
+count = 8
+      0 3 0 -999 -999 -999 
+      -999 -999 
+
+type  = integer-attribute
+name  = ORIENT_SPECIFIC
+count = 3
+      1 2 4 
+
+type  = float-attribute
+name  = ORIGIN
+count = 3
+      32 50.75 -33.25 
+
+type  = float-attribute
+name  = DELTA
+count = 3
+      -0.5 -0.5 0.5 
+
+type  = string-attribute
+name  = IDCODE_STRING
+count  = 31
+'05_September_2006_22_20_07_221~
+
+type  = string-attribute
+name  = IDCODE_DATE
+count  = 25
+'Sat Sep 9 23:32::44 2006~
+
+type  = float-attribute
+name  = BRICK_STATS
+count = 2
+      8.68839 969.883 
+
+type  = integer-attribute
+name  = BRICK_TYPES
+count = 1
+      3 
+
+type  = float-attribute
+name  = BRICK_FLOAT_FACS
+count = 1
+      0 
+
+type  = string-attribute
+name  = HISTORY_NOTE
+count  = 2478
+'Macaque F6 volume generated from 6 M. fascicularis, registered by J. Vincent, G. Patel, A. Snyder (August 2006) to the Martin-Bowden individual macaque (fascicularis) atlas (http://braininfo.rprc.washington.edu/indexabout.html/; Primate Brain Maps by Martin and Bowden, 2000)
+For each cyno in the macaqueF6 atlas target, the affine transforms can be
+factored as listed below.
+For information about registration method and a related cynomolgus (fascicularis) population atlas, see  http://www.nil.wustl.edu/labs/kevin/ni/cyno/cyno.html (purl.org/net/kbmd/cyno)
+Template images for neuroimaging in Macaca fascicularis
+Black KJ, Koller JM, Perlmutter JS
+Washington University School of Medicine, St. Louis, MO
+10 Nov 2005, and http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=15130735
+
+Stretch (factor) in x, y, z represents the factor by which the atlas (macaqueF6)
+must be stretched to fit the individual monkey.  The reciprical is the monkey to
+atlas stretch factor.  The only caveat/complication is that the axes have been
+rotated [stretch ang (deg)].  So the stretch is not EXACTLY in the x,y,z
+coordinate.
+
+monkey=leg_110805
+displacement (mm):      0.8272   16.6103    1.2952
+rotation (deg):        -8.3372  -85.8919   86.2877
+stretch (factor):     0.991815  1.108854  1.057331
+stretch ang (deg):      8.0291    6.5265   -7.8243
+
+monkey=om77_121305
+displacement (mm):     21.6371   15.0628    0.8164
+rotation (deg):        76.0028  -83.6042  139.9531
+stretch (factor):     0.869348  1.092106  0.972823
+stretch ang (deg):     -0.2792    4.5026   16.2714
+
+monkey=per_011306
+displacement (mm):     14.7713    6.6719   -1.9323
+rotation (deg):      -164.8445  -79.3589  -93.9721
+stretch (factor):     1.021399  1.204228  1.054312
+stretch ang (deg):     16.6701  -12.2247   16.8665
+
+monkey=qui_011006
+displacement (mm):     23.4565    7.5410   -6.0061
+rotation (deg):      -135.4889  -81.8363  -75.5804
+stretch (factor):     0.943338  1.100737  1.034669
+stretch ang (deg):     24.9702    2.7434   20.1016
+
+monkey=ram_112305
+displacement (mm):     13.9436   11.3038    2.5586
+rotation (deg):       118.1419  -76.0308 -158.4077
+stretch (factor):     0.959478  1.095038  1.037173
+stretch ang (deg):     19.0534   -1.0691  -16.6953
+
+monkey=xan_021606
+displacement (mm):     -7.7564   -5.1428   -0.4950
+rotation (deg):       -21.1042  -86.4693   84.5769
+stretch (factor):     1.018959  1.198431  1.081247
+stretch ang (deg):    -13.0490   -3.8178  -19.8065~
+
+type  = string-attribute
+name  = LABEL_1
+count  = 5
+'orig~
+
+type  = string-attribute
+name  = LABEL_2
+count  = 14
+'Bigfoot Lives~
+
+type  = string-attribute
+name  = DATASET_NAME
+count  = 13
+'caret volume~
+
+type  = string-attribute
+name  = BRICK_LABS
+count  = 15
+'Macaque.F6.LR~~
+
+type  = string-attribute
+name  = CARET_TYPE
+count  = 8
+'Anatomy~
+
+type  = string-attribute
+name  = BYTEORDER_STRING
+count  = 10
+'LSB_FIRST~
+

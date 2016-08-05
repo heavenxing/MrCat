@@ -1,0 +1,118 @@
+
+type  = integer-attribute
+name  = DATASET_RANK
+count = 2
+      3 1 
+
+type  = integer-attribute
+name  = DATASET_DIMENSIONS
+count = 3
+      143 187 118 
+
+type  = string-attribute
+name  = TYPESTRING
+count  = 15
+'3DIM_HEAD_ANAT~
+
+type  = integer-attribute
+name  = SCENE_DATA
+count = 8
+      0 3 0 -999 -999 -999 
+      -999 -999 
+
+type  = integer-attribute
+name  = ORIENT_SPECIFIC
+count = 3
+      1 2 4 
+
+type  = float-attribute
+name  = ORIGIN
+count = 3
+      35.55 54.55 -29.95 
+
+type  = float-attribute
+name  = DELTA
+count = 3
+      -0.5 -0.5 0.5 
+
+type  = string-attribute
+name  = ICODE_STRING
+count  = 31
+'10_September_2005_10_59_04_595~
+
+type  = string-attribute
+name  = ICODE_DATE
+count  = 26
+'Sat Sep 10 11:25::19 2005~
+
+type  = float-attribute
+name  = BRICK_STATS
+count = 2
+      0 90 
+
+type  = integer-attribute
+name  = BRICK_TYPES
+count = 1
+      0 
+
+type  = float-attribute
+name  = BRICK_FLOAT_FACS
+count = 1
+      0 
+
+type  = string-attribute
+name  = HISTORY_NOTE
+count  = 878
+'Volume intersected with surfaces: Macaque.F99UA1.Cerebral.R.FIDUCIAL.AC_origin.03-03.35946.coord; Macaque.F99UA1.Cerebral.L.FIDUCIAL.AC_origin.34132.coord	Architectonic areas from 	Lewis, J.W. and Van Essen, D.C. (2000a) 	 Architectonic parcellation of parieto-occipital cortex and interconnected cortical regions in the Macaque monkey. 	 J. Comp. Neurol. 428: 79-111	Area 8Am, 8As corrected 2 March 03	http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=11058226	http://www3.interscience.wiley.com/cgi-bin/fulltext/74500473/HTMLSTART	Van Essen DC.  Surface-based approaches to spatial localization and registration in primate cerebral cortex.	Neuroimage. 2004;23 Suppl 1:S97-107	http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=15501104	http://dx.doi.org/doi:10.1016/j.neuroimage.2004.07.024~
+
+type  = string-attribute
+name  = LABEL_1
+count  = 5
+'orig~
+
+type  = string-attribute
+name  = LABEL_2
+count  = 14
+'Bigfoot Lives~
+
+type  = string-attribute
+name  = DATASET_NAME
+count  = 13
+'caret volume~
+
+type  = string-attribute
+name  = BRICK_LABS
+count  = 30
+'Macaque.F99UA1.BOTH.LewisVE00~
+
+type  = string-attribute
+name  = BRICK_COMMENTS
+count  = 878
+'Volume intersected with surfaces: Macaque.F99UA1.Cerebral.R.FIDUCIAL.AC_origin.03-03.35946.coord; Macaque.F99UA1.Cerebral.L.FIDUCIAL.AC_origin.34132.coord
+Architectonic areas from 
+Lewis, J.W. and Van Essen, D.C. (2000a) 
+ Architectonic parcellation of parieto-occipital cortex and interconnected cortical regions in the Macaque monkey. 
+ J. Comp. Neurol. 428: 79-111
+Area 8Am, 8As corrected 2 March 03
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=11058226
+http://www3.interscience.wiley.com/cgi-bin/fulltext/74500473/HTMLSTART
+Van Essen DC.  Surface-based approaches to spatial localization and registration in primate cerebral cortex.
+Neuroimage. 2004;23 Suppl 1:S97-107
+http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=15501104
+http://dx.doi.org/doi:10.1016/j.neuroimage.2004.07.024~
+
+type  = string-attribute
+name  = CARET_TYPE
+count  = 6
+'Paint~
+
+type  = string-attribute
+name  = LUT_NAMES
+count  = 905
+'???~???_not_used~LVE00_VOT~LVE00_V4~LVE00_TEa_m~LVE00_Unassigned~LVE00_V4ta~LVE00_Ts~LVE00_Tpt~LVE00_A1~LVE00_TE1_3~LVE00_TE1_3d~LVE00_TAa~LVE00_S2~LVE00_PrCO~LVE00_V2v~LVE00_V1~LVE00_VP~LVE00_2~LVE00_6Vb~LVE00_PA~LVE00_V2d~LVE00_TPOc~LVE00_V4tp~LVE00_MT~LVE00_7b~LVE00_3b~LVE00_1~LVE00_FST~LVE00_TPOi~LVE00_TPOr~LVE00_12~LVE00_7op~LVE00_IPa~LVE00_6Val~LVE00_7t~LVE00_V3~LVE00_TE1_3v~LVE00_G~LVE00_7a~LVE00_MSTda~LVE00_3a~LVE00_Ri~LVE00_Ig_Id~LVE00_TF~LVE00_6Vam~LVE00_45~LVE00_MSTm~LVE00_LIPd~LVE00_Pi~LVE00_46p~LVE00_MSTdp~LVE00_AIP~LVE00_5V~LVE00_4C~LVE00_LIPv~LVE00_4~LVE00_13l~LVE00_DP~LVE00_36~LVE00_8Ac~LVE00_11l~LVE00_V3A~LVE00_13m~LVE00_46v~LVE00_VIPm~LVE00_ER~LVE00_5D~LVE00_VIPl~LVE00_35~LVE00_11m~LVE00_6Ds~LVE00_13a_b~LVE00_8As~LVE00_6DC~LVE00_6DR~LVE00_LOP~LVE00_8Am~LVE00_PIP~LVE00_9~LVE00_MIP~LVE00_6M~LVE00_PO~LVE00_MDP~LVE00_23~LVE00_24d~LVE00_31~LVE00_24ab~LVE00_14r~LVE00_10m~LVE00_32~
+
+type  = string-attribute
+name  = BYTEORDER_STRING
+count  = 10
+'MSB_FIRST~
+

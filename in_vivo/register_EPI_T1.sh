@@ -9,6 +9,7 @@ umask u+rw,g+rw # give group read/write permissions to all new files
 #   type \'sh register_func_struct.sh\' for usage help and info
 #
 # version history
+# 2016-08-06    Rogier    FIX: EPIbrainmask and brainmask where confused in the code
 # 2016-06-08 	Rogier    FIX: issue with $transdir that was listed as /subject/transdir
 # 2016-04-06	Lennart   created
 #
@@ -126,7 +127,7 @@ flg_bet_epi=TRUE
 for a in "$@" ; do
   case $a in
     --epi=*)          EPI="${a#*=}"; shift ;;
-    --epibrainmask=*) EPIbrain="${a#*=}"; shift ;;
+    --epibrainmask=*) EPIbrainmask="${a#*=}"; shift ;; # Rogier fix 2016-08-06
     --t1=*)           T1="${a#*=}"; shift ;;
     --t1brain=*)      T1brain="${a#*=}"; shift ;;
     --t1wm=*)         T1wm="${a#*=}"; shift ;;
@@ -203,6 +204,9 @@ fi
 # ------------------------------ #
 echo "$instr"
 
+echo "Telling you it's me"
+echo ${EPIbrainmask}
+
 
 # segment T1 to obtain white matter mask
 if [[ $instr =~ --segmentT1$ ]] ; then
@@ -232,8 +236,10 @@ fi
 # create a brain mask for the EPI image
 if [[ $instr =~ --brainmask$ ]] ; then
 
-  # make a new epi brain mask if needed
-  if [[ $flg_bet_epi == TRUE ]] || [[ ! -r $EPIbrainmask.nii.gz ]] ; then
+  # make a new epi brain mask if needed (Rogier simplified code 2016-08-06)
+  if [[ $flg_bet_epi == TRUE ]] ; then
+
+    echo "I think the EPI brain mask does not exist"
 
     # use a restored image, if present
     [[ -r $epidir/${EPI}_restore.nii.gz ]] && EPI=${EPI}_restore
@@ -299,7 +305,7 @@ if [[ $instr =~ --register$ ]] ; then
 
   # make the transformation directory (if it doesn't exist)
   mkdir -p $transdir
-  
+
   # if a fieldmap is provided, make sure a brain map exists
   if [[ $flg_fmap == TRUE ]] && [[ ! -r $fmapmagbrain.nii.gz ]]; then
     # use a brain mask either from the EPI, or from the T1
@@ -335,7 +341,7 @@ if [[ $instr =~ --register$ ]] ; then
 
   # and now register the EPI image to the T1 image using epi_reg or bbr flirt
   if [[ $costfun == bbr ]] ; then
-  
+
     if [[ $dof -eq 6 ]] ; then
       echo "  rigid-body registration of the EPI to the T1 image using epi_reg"
       # is a field map provided?
@@ -351,7 +357,7 @@ if [[ $instr =~ --register$ ]] ; then
       flirt -dof $dof -cost bbr -init $regfwd.mat -in $epidir/${EPI}_brain -inweight ${EPIbrainmask}_strict -ref $T1brain -wmseg $T1wm -omat $regfwd.mat
     fi
   else
-  
+
     echo "  linear registration ($dof dof, $costfun cost) of the EPI to the T1 image"
     flirt -dof $dof -cost $costfun -in $epidir/${EPI}_brain -inweight ${EPIbrainmask}_strict -ref $T1brain -refweight $T1brainmask -omat $regfwd.mat
   fi

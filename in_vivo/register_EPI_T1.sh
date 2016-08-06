@@ -204,10 +204,6 @@ fi
 # ------------------------------ #
 echo "$instr"
 
-echo "Telling you it's me"
-echo ${EPIbrainmask}
-
-
 # segment T1 to obtain white matter mask
 if [[ $instr =~ --segmentT1$ ]] ; then
 

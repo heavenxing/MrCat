@@ -15,18 +15,18 @@
 # Set up stuff (edit this part)
 #=======================================
 
-studydir=/Users/rogiermars/data/rsc/rsn_pipeline
-subj=vassell
-declare -a tasklist=("regressout_CSFWM")
+studydir=/vols/Data/rbmars/hipp
+subj=subj1
+declare -a tasklist=("filter")
 
 workbench_dir=/Applications/workbench1.1.1/bin_macosx64
-export MRCATDIR=${HOME}/code/MrCat-dev
+export MRCATDIR=/vols/Data/rbmars/hipp/MrCat
 export wb_command=${workbench_dir}/wb_command
 
 # Recommended order of pipeline:
-# reorient_struc (done)
-# bet_and_register_struc
-# reorient_func (done)
+# reorient_struc_oxford or reorient_struct_sinai (done)
+# bet_and_register_struc (done)
+# reorient_func_oxford or reorient_func_sinai (done)
 # bet_func (done)
 # coreg_func_struct (done)
 # filter (done)
@@ -61,10 +61,17 @@ for task in "${tasklist[@]}"; do
   # Reorient structural data
   #---------------------------------------
 
-  if [ "$task" == "reorient_struc" ]; then
+  if [ "$task" == "reorient_struc_oxford" ]; then
     echo "Task: reorienting structural data"
     cd ${studydir}/${subj}/structural
     sh ${MRCATDIR}/in_vivo/macaque_rsn_pipeline/rsn_reorient.sh ${studydir}/${subj}/structural/struct.nii.gz
+  fi
+
+  if [ "$task" == "reorient_struct_sinai" ]; then
+    echo "Task: reorienting structural data"
+    cd ${studydir}/${subj}/structural
+    sh ${MRCATDIR}/in_vivo/macaque_rsn_pipeline/rsn_reorient.sh ${studydir}/${subj}/structural/struct.nii.gz
+    fslswapdim ${studydir}/${subj}/structural/struct.nii.gz -x y z ${studydir}/${subj}/structural/struct.nii.gz
   fi
 
   #---------------------------------------
@@ -81,10 +88,17 @@ for task in "${tasklist[@]}"; do
   # Reorient functional data
   #---------------------------------------
 
-  if [ "$task" == "reorient_func" ]; then
+  if [ "$task" == "reorient_func_oxford" ]; then
     echo "Task: reorienting functional data"
     cd ${studydir}/${subj}/functional
     sh ${MRCATDIR}/in_vivo/macaque_rsn_pipeline/rsn_reorient.sh ${studydir}/${subj}/functional/raw.nii.gz
+  fi
+
+  if [ "$task" == "reorient_func_sinai" ]; then
+    echo "Task: reorienting functional data"
+    cd ${studydir}/${subj}/functional
+    sh ${MRCATDIR}/in_vivo/macaque_rsn_pipeline/rsn_reorient.sh ${studydir}/${subj}/functional/raw.nii.gz
+    fslswapdim ${studydir}/${subj}/functional/raw.nii.gz -x y z ${studydir}/${subj}/functional/raw.nii.gz
   fi
 
   #---------------------------------------
@@ -93,7 +107,7 @@ for task in "${tasklist[@]}"; do
 
   if [ "$task" == "bet_func" ]; then
     echo "Task: betting functional data"
-    sh ${MRCATDIR}/in_vivo/bet_macaque.sh ${studydir}/${subj}/functional/raw.nii.gz -t T2star -f 0.75 -fFP .95
+    sh ${MRCATDIR}/in_vivo/bet_macaque.sh ${studydir}/${subj}/functional/raw.nii.gz -t T2star -f 0.65 -fFP .95 -s 70
   fi
 
   #---------------------------------------
@@ -127,6 +141,12 @@ for task in "${tasklist[@]}"; do
 
   if [ "$task" == "regressout_CSFWM" ]; then
     echo "Task: regressing out CSF and WM time courses"
+    if [ -f "$file" ]
+    then
+      # File exists: do nothing
+    else
+      fslroi ${studydir}/${subj}/functional/raw_brain.nii.gz ${studydir}/${subj}/functional/example_func.nii.gz 0 1
+    fi
     sh ${MRCATDIR}/in_vivo/macaque_rsn_pipeline/rsn_regressoutCSFWM.sh ${studydir}/${subj} filtered_brain --fast=struct_restore_brain
   fi
 

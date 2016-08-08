@@ -17,7 +17,7 @@
 
 studydir=/vols/Data/rbmars/hipp
 subj=subj1
-declare -a tasklist=("filter")
+declare -a tasklist=("reorient_struct_sinai" "bet_and_register_struc" "reorient_func_sinai" "bet_func" "coreg_func_struct" "filter" "regressout_CSFWM" "dtseries" "smooth_dtseries" "dtseries2dconn")
 
 workbench_dir=/Applications/workbench1.1.1/bin_macosx64
 export MRCATDIR=/vols/Data/rbmars/hipp/MrCat

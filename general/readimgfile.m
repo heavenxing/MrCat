@@ -11,6 +11,7 @@ function [data, varargout] = readimgfile(filename,varargin)
 % Use:
 %   data = readimgfile('myfile.dconn.nii');
 %   [data, filetype] = readimgfile('yourfile');
+%   [data, filetype, hdr] = readimgfile('yourfile');
 %
 % Obligatory input:
 %   filename    string containing filename (with or without extension)
@@ -24,11 +25,14 @@ function [data, varargout] = readimgfile(filename,varargin)
 % Outputs:
 %   data            matrix with data
 %   varargout{1}    string containing file type
+%   varargout{2}    header
 %
-% Uses: read_avw.m, ciftiopen.m, gifti toolbox, see their separate docs.
-% Compatible with MrCat versions
+% Uses: read_avw.m, ciftiopen.m, gifti toolbox, load_nifti.m, see their
+% separate docs. Compatible with MrCat versions
 %
 % version history
+% 2016-07-13    Rogier  Changed nifti handling to use Freesurfer's
+%                       load_nifti.m and added varargout{2} for the header
 % 2016-05-27    Rogier  Added varargout file type
 % 2016-04-22    Rogier  Fixed bug dealing with .surf.gii instead of
 %                       .func.gii
@@ -47,6 +51,7 @@ function [data, varargout] = readimgfile(filename,varargin)
 % Defaults
 dealwithnan = 'no';
 dealwithinf = 'no';
+hdr = [];
 
 if nargin>1
     for vargnr = 2:2:length(varargin)
@@ -127,7 +132,9 @@ switch filetype
             data = data.cdata;
         end
     case 'NIFTI_GZ'
-        data = read_avw(filename);
+        % data = read_avw(filename);
+        hdr = load_nifti(filename);
+        data = hdr.vol;
     case 'DCONN'
         data = ciftiopen(filename);
         data = data.cdata;
@@ -167,3 +174,4 @@ end
 %==================================================
 
 varargout{1} = filetype;
+varargout{2} = hdr;

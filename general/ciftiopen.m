@@ -2,7 +2,7 @@ function data = ciftiopen(filename,wb_command)
 % function data = ciftiopen(filename,wb_command)
 %
 % Open a CIFTI file by converting to GIFTI external binary first and then
-% using the GIFTI toolbox. Based on Saad's original
+% using the GIFTI toolbox. Based on Saad Jbabdi's original
 %--------------------------------------------------------------------------
 %
 % Use:
@@ -19,7 +19,7 @@ function data = ciftiopen(filename,wb_command)
 %   wb_command  string containing link to wb_command version to be used
 %
 % version history
-%   2016-05-26  Rogier  created based on Saad's original
+%   2016-05-26  Rogier  created based on Saad Jbabdi's original
 %
 % copyright
 %   Rogier B. Mars
@@ -29,9 +29,17 @@ function data = ciftiopen(filename,wb_command)
 %==================================================
 % Housekeeping
 %==================================================
-
+% Implemented to work on macs, DCC, and Oxford clusters
 if(nargin<2)
-    wb_command='/Applications/workbench/bin_macosx64/wb_command';
+    if ismac && exist(fullfile('/Applications/workbench/bin_macosx64/'), 'dir')        
+        wb_command = '/Applications/workbench/bin_macosx64/wb_command';
+    elseif isunix && exist(fullfile('/vol/optdcc/workbench/bin_linux64/'), 'dir')  
+        wb_command = '/vol/optdcc/workbench/bin_linux64/wb_command';
+    elseif isunix && exist(fullfile('/opt/fmrib/workbench-1.1.1/bin_rh_linux64/'),'dir')
+        wb_command = '/opt/fmrib/workbench-1.1.1/bin_rh_linux64/wb_command';
+    else
+        error 'Cannot find workbenck directory. Please provide path to wb_command.';
+    end
 end
 
 %==================================================

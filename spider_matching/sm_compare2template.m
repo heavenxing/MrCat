@@ -25,6 +25,8 @@ function stats = sm_compare2template(template,data,nperms,method)
 %   cosine_similarity.m
 %
 % version history
+% 2016-10-30  Rogier    Fixed small bug in passing permutedD (thanks to
+%                       Josh Balsters) and in handling perm_results.m
 % 2016-05-10  Rogier    Results handling improved to use perm_results.m
 % 2015-09-16	Lennart		documentation
 % 2015-09-06  Rogier    Cleaned up for GitHub release
@@ -97,7 +99,7 @@ for p = 1:stats.nperms
     end
 
 end
-
+stats.permutedD = permutedD;
 
 %===============================
 %% Determine criterion and report
@@ -105,8 +107,15 @@ end
 
 fprintf('Evaluating results...\n');
 
-permutedD = [stats.actual; permutedD];
-[pvalue,results] = perm_results(permutedD,'toplot','yes');
+switch method
+    case 'manhattan'
+        [pvalue,results] = perm_results(permutedD,'side','left-side','toplot','yes');
+    case 'cosine_similarity'
+        [pvalue,results] = perm_results(permutedD,'toplot','yes');
+end
+
+stats.pvalue = pvalue;
+stats.results = results;
 
 fprintf('Done!\n');
 

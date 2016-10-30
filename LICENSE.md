@@ -1,4 +1,4 @@
-Copyright (c) 2015, Rogier B. Mars and Lennart Verhagen
+Copyright (c) 2015-2016, Rogier B. Mars, Lennart Verhagen, and Thomas E. Gladwin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

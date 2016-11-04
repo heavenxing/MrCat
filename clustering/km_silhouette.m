@@ -16,10 +16,11 @@ function km_silhouette(idxx,X,varargin)
 %               values to *.mat file
 %
 % Output
-%   none        results are reported in a figure
+%   none        results are reported in figures
 %
 % version history
-% 2015-09-16	Lennart		documentation
+% 2016-03-06  Rogier    minor change to deal with output dirs of kmeans_fdt
+% 2015-09-16  Lennart   documentation
 % 2014-11-24  Rogier    Added varargin options to save fig and silh values
 % 2014-02-25  Rogier    created
 %
@@ -74,10 +75,10 @@ for cc = 1:size(idxx,2)
 end
 
 if ~isempty(savefig)
-    saveas(h,strcat(savefig, '_silhouette_plots.jpg'));
+    saveas(h,strcat(savefig, 'silhouette_plots.jpg'));
 end
 if ~isempty(savesilh)
-    save(strcat(savesilh, '_silhouette_values.mat'),'allsilh');
+    save(strcat(savesilh, 'silhouette_values.mat'),'allsilh');
 end
 
 hold off;
@@ -92,5 +93,5 @@ for cc = 1:size(idxx,2)
 end
 h = figure; plot([max(idxx(:,1)):max(idxx(:,size(idxx,2)))],meansilh);
 if ~isempty(savefig)
-    saveas(h,strcat(savefig, '_mean_silhouette_value_plot.jpg'));
+    saveas(h,strcat(savefig, 'mean_silhouette_value_plot.jpg'));
 end

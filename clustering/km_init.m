@@ -98,7 +98,7 @@ for r = 1:n_repeats
             % Redmond; Heneghan - 2007 - PattRecogLett - A method for
             % initialising the k-means clustering algorithm using kd-trees
             warning('KMEANS_INIT:kdtree_replications','The kdtree initialisation algorithm will give the same result for every replication.');
-            Cinit(:,:,r) = kmeans_init_kdtree(X,k);
+            Cinit(:,:,r) = km_init_kdtree(X,k);
             
         otherwise
             error('Error in MrCat:KMEANS_INIT:unsupported_method','This method (%s) is not currently supported.',method);

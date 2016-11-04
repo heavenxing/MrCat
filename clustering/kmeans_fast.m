@@ -144,10 +144,10 @@ end % for r = 1:nr_rep
 % give warning if the requested number of clusters could not be reached.
 if ~flg_k
     if isnumeric(Cinit)
-        warning('KMEANS:PLUSPLUS:replications_fixed','One or more solutions have less than the requested number of clusters, but they could not be improved because the number of replications is fixed by Cinit.');
+        warning('KMEANS:FAST:replications_fixed','One or more solutions have less than the requested number of clusters, but they could not be improved because the number of replications is fixed by Cinit.');
     end
     if ischar(Cinit) && strcmpi(Cinit,'kdtree')
-        warning('KMEANS:PLUSPLUS:Cinit_fixed','The solution has less than k clusters, but it could not be improved because the kdtree Cinit algorithm will always give the same result.');
+        warning('KMEANS:FAST:Cinit_fixed','The solution has less than k clusters, but it could not be improved because the kdtree Cinit algorithm will always give the same result.');
     end
 end
 %--------------------------------------------------------------------------
